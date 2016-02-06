@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-YOUR HEADER COMMENT HERE
+The Going beyond part is in the going_beyond function. 
 
 @author: David Papp
 
@@ -177,10 +177,19 @@ def find_all_ORFs_both_strands(dna):
 def longest_ORF(dna):
     """ Finds the longest ORF on both strands of the specified DNA and returns it
         as a string
+
+        This test is sufficient because there are multiple ORFs found and the longest value was chosen.
+        If you wanted to go overboard you could make a sequence that has multiple max values, but it wouldn't change anything in the context of this problem.
     >>> longest_ORF("ATGCGAATGTAGCATCAAA")
     'ATGCTACATTCGCAT'
     """
-    # TODO: implement this
+    longest_ORF = ""
+    ORF_values = find_all_ORFs_both_strands(dna)
+    for i in range(0, len(ORF_values)):
+    	if len(ORF_values[i]) > len(longest_ORF):
+    		longest_ORF = ORF_values[i]
+
+    return longest_ORF
 
 
 def longest_ORF_noncoding(dna, num_trials):
@@ -190,7 +199,14 @@ def longest_ORF_noncoding(dna, num_trials):
         dna: a DNA sequence
         num_trials: the number of random shuffles
         returns: the maximum length longest ORF """
-    # TODO: implement this
+    longest_length = 0
+    for i in range(0, num_trials):
+    	shuffled_dna = shuffle_string(dna)
+    	shuffled_dna_longest_length = len(longest_ORF(shuffled_dna))
+    	if shuffled_dna_longest_length > longest_length:
+    		longest_length = shuffled_dna_longest_length
+    return longest_length
+    
 
 
 def coding_strand_to_AA(dna):
@@ -202,13 +218,22 @@ def coding_strand_to_AA(dna):
         returns: a string containing the sequence of amino acids encoded by the
                  the input DNA fragment
 
+                 The third unit test is to make sure that the functon returns nothing when the frame is shorter than 3 units. Also to test the case where the length modulus 3 is 1.
         >>> coding_strand_to_AA("ATGCGA")
         'MR'
         >>> coding_strand_to_AA("ATGCCCGCTTT")
         'MPA'
+        >>> coding_strand_to_AA(A)
+        ''
     """
-    # TODO: implement this
-
+    i = 0
+    answer = ""
+    while i < len(dna) - 2:
+    	sub_dna = dna[i:i+3]
+    	amino_acid = aa_table[sub_dna]
+    	answer += amino_acid
+    	i += 3
+    return answer
 
 def gene_finder(dna):
     """ Returns the amino acid sequences that are likely coded by the specified dna
@@ -216,7 +241,41 @@ def gene_finder(dna):
         dna: a DNA sequence
         returns: a list of all amino acid sequences coded by the sequence dna.
     """
-    # TODO: implement this
+    threshold = longest_ORF_noncoding(dna, 1500)
+    print threshold
+    ORF_list = find_all_ORFs_both_strands(dna)
+    amino_acid_list = []
+    for i in range(0, len(ORF_list)):
+    	if len(ORF_list[i]) > threshold:
+    		amino_acid_list.append(coding_strand_to_AA(ORF_list[i]))
+
+    return amino_acid_list
+
+def going_beyond():
+	from load import load_nitrogenase_seq
+	nitrogenase = load_nitrogenase_seq()
+	#print nitrogenase
+
+	from load import load_metagenome
+	metagenome = load_metagenome()
+
+	longest_snippet = ""
+	k = 0
+	while k < len(metagenome)
+		i = 0
+		while i < len(nitrogenase):
+			j = 0
+			while j < len(metagenome[k][1]):
+				length = 0
+				while  (i + length < len(nitrogenase)) and (j + length < len(metagenome[k][1])) and (nitrogenase[i + length] == metagenome[k][1][j + length]):
+					length += 1
+				if length > len(longest_snippet):
+					longest_snippet = nitrogenase[i:i+length]
+				j += 1 + length #adding length here makes the program run a little faster
+			i += 1
+		k += 1
+
+	return longest_snippet
 
 if __name__ == "__main__":
     import doctest
@@ -229,5 +288,14 @@ if __name__ == "__main__":
     #print find_all_ORFs_oneframe("ATGCATGAATGTAGATAGATGTGCCC")
     #print find_all_ORFs("ATGCATGAATGTAG")
     #print find_all_ORFs_both_strands("ATGCGAATGTAGCATCAAA")
-    doctest.run_docstring_examples(find_all_ORFs_both_strands, globals())
+    #print longest_ORF("ATGCGAATGTAGCATCAAA")
+    #print longest_ORF_noncoding("ATGCGAATGTAGCATCAAA",1000)
+    #print coding_strand_to_AA("ATGCGA")
+    #print coding_strand_to_AA("ATGCCCGCTTT")
+    #print gene_finder("ATGCATGAATGTAGATAGATGTGCCC")
+    #doctest.run_docstring_examples(longest_ORF, globals())
     #doctest.testmod()
+    #from load import load_seq
+    #dna = load_seq("./data/X73525.fa")
+    print going_beyond()
+    #print gene_finder(dna)
