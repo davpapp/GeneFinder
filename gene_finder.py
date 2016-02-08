@@ -261,7 +261,7 @@ def going_beyond():
 
 	longest_snippet = ""
 	k = 0
-	while k < len(metagenome)
+	while k < len(metagenome):
 		i = 0
 		while i < len(nitrogenase):
 			j = 0
